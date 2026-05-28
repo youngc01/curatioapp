@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Curatio is a cinematic Apple TV and iPhone media player for private libraries, with HDR playback, intro skip, synced progress, and built-in support." />
+  <meta property="og:title" content="Curatio — Stream anything. Beautifully." />
+  <meta property="og:description" content="A native Apple TV and iPhone player for your private media library with HDR playback, intro skip, and seamless cross-device watching." />
+  <meta property="og:type" content="website" />
+  <meta name="apple-itunes-app" content="app-id=000000000" />
+  <title>Curatio — Stream anything. Beautifully.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-soft: #11111a;
+      --card: #141420;
+      --line: #232338;
+      --text: #f5f6ff;
+      --muted: #b8bbd2;
+      --accent: #6c63ff;
+      --accent-2: #4f46e5;
+      --success: #57d99d;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --container: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(1200px 700px at 80% -10%, rgba(108, 99, 255, 0.15), transparent 60%), var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(100% - 2rem, var(--container));
+      margin-inline: auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+      background: rgba(10, 10, 15, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 1rem;
+    }
+
+    .wordmark {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.72rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    .btn-secondary {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+    }
+
+    section {
+      padding: 5rem 0;
+    }
+
+    .hero {
+      padding-top: 6rem;
+      padding-bottom: 4rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.1;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 1.25rem auto 2rem;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.6vw, 1.25rem);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+    }
+
+    .badge {
+      padding: 0.38rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--muted);
+      font-size: 0.87rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .section-title {
+      font-size: clamp(1.55rem, 3.2vw, 2.2rem);
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      margin: 0 0 2rem;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.03));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .icon {
+      width: 2.15rem;
+      height: 2.15rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+      border-radius: 10px;
+      background: rgba(108, 99, 255, 0.12);
+      border: 1px solid rgba(108, 99, 255, 0.4);
+    }
+
+    .card h3 { margin: 0 0 0.45rem; font-size: 1.02rem; }
+    .card p { margin: 0; color: var(--muted); font-size: 0.96rem; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .step-num {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: rgba(108, 99, 255, 0.15);
+      border: 1px solid rgba(108, 99, 255, 0.45);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 0.65rem;
+      color: #d9d7ff;
+    }
+
+    .faq details {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      background: var(--bg-soft);
+      margin-bottom: 0.8rem;
+    }
+
+    .faq summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .faq p {
+      margin: 0.65rem 0 0;
+      color: var(--muted);
+    }
+
+    .support-wrap {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 1.1rem;
+      align-items: start;
+    }
+
+    .form-card label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .form-card input,
+    .form-card textarea,
+    .form-card select {
+      width: 100%;
+      margin-bottom: 0.9rem;
+      border: 1px solid var(--line);
+      background: #0f0f18;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0.7rem 0.8rem;
+      font: inherit;
+    }
+
+    .success-message {
+      border: 1px solid rgba(87, 217, 157, 0.45);
+      background: rgba(87, 217, 157, 0.08);
+      color: #dcffe9;
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .privacy p { color: var(--muted); margin-top: 0.4rem; }
+    .privacy strong { color: var(--text); }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.25rem 0 2.2rem;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .footer-links { display: flex; gap: 1rem; }
+
+    @media (max-width: 960px) {
+      .features-grid,
+      .steps,
+      .support-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      section { padding: 4rem 0; }
+      .hero { padding-top: 4.75rem; }
+    }
+
+    @media (max-width: 560px) {
+      .btn { width: 100%; }
+      .cta-row { align-items: stretch; }
+      .nav .btn { width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="wordmark" aria-label="Curatio home">Curatio</a>
+      <a class="btn btn-primary" href="#">Download on the App Store</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Stream anything. Beautifully.</h1>
+        <p>Curatio brings your private media library to Apple TV and iPhone — with a native interface built for the big screen.</p>
+        <div class="cta-row">
+          <a href="#" class="btn btn-primary">Download for Apple TV</a>
+          <a href="#" class="btn btn-secondary">Download for iPhone</a>
+        </div>
+        <div class="badges" aria-label="Supported devices and quality badges">
+          <span class="badge">Apple TV</span>
+          <span class="badge">iPhone</span>
+          <span class="badge">HDR</span>
+          <span class="badge">4K</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2 class="section-title">Features</h2>
+        <p class="section-subtitle">Everything in Curatio is designed to keep your private library fast, elegant, and effortless to enjoy on every screen.</p>
+        <div class="features-grid">
+          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></div><h3>Private media, your way</h3><p>Connect to your own media server or use compatible add-ons. Your library, your rules.</p></article>
+          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M15 12h5"/></svg></div><h3>Built for Apple TV</h3><p>Every interaction designed for the Siri Remote. Fast shelf browsing, focus-aware cards, and instant search.</p></article>
+          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M12 3l2.6 5.7L21 9.6l-4.5 4.4 1 6.3L12 17.4 6.5 20.3l1-6.3L3 9.6l6.4-.9z"/></svg></div><h3>HDR playback</h3><p>Hardware-accelerated video with automatic HDR mode switching. Watch your content the way it was mastered.</p></article>
+          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/><path d="M12 8v4l3 2"/></svg></div><h3>Smart intro skip</h3><p>Audio fingerprinting detects intros and credits across episodes automatically, without any manual setup.</p></article>
+          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M4 9h16"/><path d="M4 15h10"/><circle cx="18" cy="15" r="2"/></svg></div><h3>Seamless audio &amp; subtitles</h3><p>Switch audio tracks and subtitles mid-playback without interruption. Multiple language support built in.</p></article>
+          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Continue watching</h3><p>Resume exactly where you left off, across Apple TV and iPhone, synced automatically.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2 class="section-title">How it works</h2>
+        <div class="steps">
+          <article class="card"><div class="step-num">1</div><h3>Add your server</h3><p>Enter your media server URL or scan a QR code to pair instantly.</p></article>
+          <article class="card"><div class="step-num">2</div><h3>Browse your library</h3><p>Your content appears in a beautiful shelf layout, ready to explore.</p></article>
+          <article class="card"><div class="step-num">3</div><h3>Press play</h3><p>Sit back. Curatio handles the rest.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="support">
+      <div class="container">
+        <h2 class="section-title">Need help?</h2>
+        <div class="support-wrap">
+          <div class="faq">
+            <details><summary>What media servers does Curatio support?</summary><p>Curatio works with any server that supports the Stremio Add-on protocol, including popular self-hosted options.</p></details>
+            <details><summary>Is Curatio free?</summary><p>Curatio is free to download. Some features may require a compatible media server.</p></details>
+            <details><summary>Does Curatio access my files directly?</summary><p>No. Curatio connects to your media server over your local network or the internet. Your files stay on your server.</p></details>
+            <details><summary>Which Apple devices are supported?</summary><p>Curatio runs on Apple TV (4th generation and later) and iPhone (iOS 17 and later).</p></details>
+            <details><summary>How does intro skip work?</summary><p>Curatio analyses the audio of episodes in the background to detect repeated segments like intros and credits. No microphone is used — only the stream audio is processed.</p></details>
+          </div>
+
+          <div class="card form-card" id="contact-card">
+            <!-- Replace REPLACE_WITH_YOUR_ID with your real Formspree form ID before publishing. -->
+            <form id="contact-form" action="https://formspree.io/f/REPLACE_WITH_YOUR_ID" method="POST">
+              <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required />
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required />
+              <label for="subject">Subject</label>
+              <select id="subject" name="subject" required>
+                <option value="General Question">General Question</option>
+                <option value="Bug Report">Bug Report</option>
+                <option value="Feature Request">Feature Request</option>
+                <option value="Other">Other</option>
+              </select>
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="4" required></textarea>
+              <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" class="privacy">
+      <div class="container">
+        <h2 class="section-title">Privacy Policy</h2>
+        <p class="section-subtitle">Last updated: 2025</p>
+        <p><strong>What we collect.</strong> Curatio does not collect personal data, usage analytics, or telemetry by default. The app operates entirely between your device and your chosen media server.</p>
+        <p><strong>iCloud sync.</strong> If you enable iCloud sync in Settings, your app preferences (server configuration, language preferences, display settings) are synced via your personal iCloud account. This data is not accessible to Curatio.</p>
+        <p><strong>Local network.</strong> Curatio requests local network access to discover and connect to media servers on your home network. No data from your local network is transmitted to any Curatio server.</p>
+        <p><strong>Credentials.</strong> Your server credentials are stored exclusively in your device's secure Keychain and are never transmitted to or stored by Curatio.</p>
+        <p><strong>Third-party servers.</strong> When you connect to a media server or add-on, you are subject to that service's own privacy policy. Curatio is not responsible for third-party data practices.</p>
+        <p><strong>Children.</strong> Curatio is not directed at children under 13 and does not knowingly collect information from children.</p>
+        <p><strong>Contact.</strong> Privacy questions can be submitted via the support form above.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div><span class="wordmark">Curatio</span> &nbsp; © 2025 Curatio</div>
+      <div class="footer-links">
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#support">Support</a>
+        <a href="#">App Store</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form');
+      if (!form) return;
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var data = new FormData(form);
+        fetch(form.action, {
+          method: form.method,
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Request failed');
+          var wrapper = document.getElementById('contact-card');
+          wrapper.innerHTML = '<div class="success-message"><strong>Thanks — your message was sent.</strong><br/>We\'ll get back to you as soon as possible.</div>';
+        })
+        .catch(function () {
+          form.submit();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
