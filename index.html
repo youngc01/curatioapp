@@ -3,272 +3,665 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Curatio is a cinematic Apple TV and iPhone media player for private libraries, with HDR playback, intro skip, synced progress, and built-in support." />
-  <meta property="og:title" content="Curatio — Stream anything. Beautifully." />
-  <meta property="og:description" content="A native Apple TV and iPhone player for your private media library with HDR playback, intro skip, and seamless cross-device watching." />
+  <meta name="description" content="Curatio is a native Apple TV and iPhone app for your own media library. Stream your files beautifully — HDR, intro skip, synced progress — powered by your own Curatio Server." />
+  <meta property="og:title" content="Curatio — Your library. Your server. Your screen." />
+  <meta property="og:description" content="A native Apple TV and iPhone player for your private media library. Self-hosted, no subscriptions, no limits." />
   <meta property="og:type" content="website" />
   <meta name="apple-itunes-app" content="app-id=000000000" />
-  <title>Curatio — Stream anything. Beautifully.</title>
+  <title>Curatio — Your library. Your server. Your screen.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0f;
-      --bg-soft: #11111a;
-      --card: #141420;
-      --line: #232338;
-      --text: #f5f6ff;
-      --muted: #b8bbd2;
-      --accent: #6c63ff;
-      --accent-2: #4f46e5;
-      --success: #57d99d;
-      --radius: 16px;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      --container: 1120px;
+      --bg: #080b10;
+      --bg-soft: #0e1219;
+      --card: #111620;
+      --card-hover: #151c2a;
+      --line: #1e2535;
+      --line-soft: rgba(255,255,255,0.06);
+      --text: #eef0f8;
+      --muted: #8b91ab;
+      --muted-2: #6a7090;
+      --accent: #3d7fff;
+      --accent-glow: rgba(61,127,255,0.18);
+      --accent-dim: rgba(61,127,255,0.08);
+      --gold: #f5a623;
+      --success: #4cd9a0;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.45);
+      --shadow-lg: 0 24px 60px rgba(0,0,0,0.55);
+      --container: 1080px;
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
     }
 
-    * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(1200px 700px at 80% -10%, rgba(108, 99, 255, 0.15), transparent 60%), var(--bg);
+      font-family: var(--font-body);
+      background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.65;
+      font-size: 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Subtle noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.4;
     }
 
     a { color: inherit; text-decoration: none; }
+    p { margin-top: 0; }
 
     .container {
-      width: min(100% - 2rem, var(--container));
+      width: min(100% - 2.5rem, var(--container));
       margin-inline: auto;
+      position: relative;
+      z-index: 1;
     }
 
+    /* ── Nav ─────────────────────────────────────────────── */
     .nav {
       position: sticky;
       top: 0;
       z-index: 999;
-      backdrop-filter: blur(10px);
-      background: rgba(10, 10, 15, 0.7);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background: rgba(8,11,16,0.78);
+      border-bottom: 1px solid var(--line-soft);
     }
 
     .nav-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      min-height: 72px;
+      min-height: 68px;
       gap: 1rem;
     }
 
     .wordmark {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      letter-spacing: 0.01em;
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 0.72rem 1.1rem;
+      gap: 0.45rem;
+      padding: 0.62rem 1.1rem;
       border-radius: 999px;
       border: 1px solid transparent;
-      font-weight: 600;
-      transition: 0.2s ease;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      background: var(--accent);
       color: #fff;
-      box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
+      box-shadow: 0 0 0 0 var(--accent-glow);
+    }
+    .btn-primary:hover {
+      background: #5590ff;
+      box-shadow: 0 4px 24px rgba(61,127,255,0.38);
+      transform: translateY(-1px);
     }
 
-    .btn-primary:hover { transform: translateY(-1px); }
-
-    .btn-secondary {
+    .btn-ghost {
       border-color: var(--line);
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.06);
       color: var(--text);
     }
 
-    section {
-      padding: 5rem 0;
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      padding: 7rem 0 5rem;
+      text-align: center;
+      position: relative;
     }
 
-    .hero {
-      padding-top: 6rem;
-      padding-bottom: 4rem;
-      text-align: center;
+    /* Radial glow behind hero */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(61,127,255,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(61,127,255,0.3);
+      background: rgba(61,127,255,0.08);
+      color: #7eaaff;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse-dot 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
-      line-height: 1.1;
-      margin: 0;
-      letter-spacing: -0.02em;
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      line-height: 1.08;
+      margin: 0 0 1.25rem;
+      letter-spacing: -0.01em;
+      color: var(--text);
     }
 
-    .hero p {
-      max-width: 760px;
-      margin: 1.25rem auto 2rem;
+    h1 em {
+      font-style: italic;
+      color: #7eaaff;
+    }
+
+    .hero-sub {
+      max-width: 640px;
+      margin: 0 auto 2.25rem;
       color: var(--muted);
-      font-size: clamp(1rem, 2.6vw, 1.25rem);
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      font-weight: 300;
+      line-height: 1.7;
     }
 
     .cta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.7rem;
       justify-content: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .cta-row .btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.96rem;
     }
 
     .badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem;
+      gap: 0.5rem;
       justify-content: center;
     }
 
     .badge {
-      padding: 0.38rem 0.75rem;
+      padding: 0.3rem 0.7rem;
       border-radius: 999px;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--muted);
-      font-size: 0.87rem;
+      background: rgba(255,255,255,0.02);
+      color: var(--muted-2);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Section shell ───────────────────────────────────── */
+    section {
+      padding: 5.5rem 0;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
       font-weight: 600;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
     }
 
     .section-title {
-      font-size: clamp(1.55rem, 3.2vw, 2.2rem);
-      margin: 0 0 0.35rem;
-      letter-spacing: -0.02em;
+      font-family: var(--font-display);
+      font-size: clamp(1.65rem, 3.2vw, 2.4rem);
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
     }
 
-    .section-subtitle {
-      margin: 0 0 2rem;
+    .section-sub {
+      margin: 0 0 2.5rem;
       color: var(--muted);
-      max-width: 720px;
+      max-width: 600px;
+      font-weight: 300;
+      font-size: 1.02rem;
     }
 
+    /* ── Cards ───────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      background: var(--card-hover);
+      border-color: rgba(61,127,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.9rem;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(61,127,255,0.25);
+      flex-shrink: 0;
+    }
+
+    .card h3 {
+      margin: 0 0 0.45rem;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    /* ── Features grid ───────────────────────────────────── */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
     }
 
-    .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.03));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 1.2rem;
-      box-shadow: var(--shadow);
-    }
-
-    .icon {
-      width: 2.15rem;
-      height: 2.15rem;
-      display: inline-flex;
+    /* Wide hero feature card */
+    .feature-hero {
+      grid-column: span 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 0.8rem;
-      border-radius: 10px;
-      background: rgba(108, 99, 255, 0.12);
-      border: 1px solid rgba(108, 99, 255, 0.4);
+      padding: 2rem 2.25rem;
+      background: linear-gradient(135deg, rgba(61,127,255,0.06), rgba(61,127,255,0.02));
+      border-color: rgba(61,127,255,0.2);
     }
 
-    .card h3 { margin: 0 0 0.45rem; font-size: 1.02rem; }
-    .card p { margin: 0; color: var(--muted); font-size: 0.96rem; }
+    .feature-hero-text h3 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      margin: 0 0 0.6rem;
+      line-height: 1.2;
+    }
 
+    .feature-hero-text p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .feature-hero-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .server-line {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .server-line .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 6px var(--success);
+      flex-shrink: 0;
+    }
+
+    .server-line code {
+      font-size: 0.8rem;
+      color: #7eaaff;
+      background: rgba(61,127,255,0.1);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    /* ── How it works ────────────────────────────────────── */
     .steps {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 1rem;
+      position: relative;
+    }
+
+    /* Connector line between steps */
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 2.1rem;
+      left: calc(12.5% + 1rem);
+      right: calc(12.5% + 1rem);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--line) 15%, var(--line) 85%, transparent);
+      pointer-events: none;
     }
 
     .step-num {
-      width: 2rem;
-      height: 2rem;
+      width: 2.2rem;
+      height: 2.2rem;
       border-radius: 50%;
-      background: rgba(108, 99, 255, 0.15);
-      border: 1px solid rgba(108, 99, 255, 0.45);
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      margin-bottom: 0.65rem;
-      color: #d9d7ff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
     }
 
+    .step-num.active {
+      background: var(--accent-dim);
+      border-color: rgba(61,127,255,0.45);
+      color: #7eaaff;
+    }
+
+    /* ── Self-host callout ───────────────────────────────── */
+    .selfhost-callout {
+      background: linear-gradient(135deg, rgba(61,127,255,0.07) 0%, rgba(61,127,255,0.02) 100%);
+      border: 1px solid rgba(61,127,255,0.18);
+      border-radius: var(--radius-lg);
+      padding: 3rem 3rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .selfhost-callout h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+      margin: 0 0 0.6rem;
+      line-height: 1.2;
+    }
+
+    .selfhost-callout p {
+      color: var(--muted);
+      margin: 0 0 1.25rem;
+      max-width: 500px;
+      font-weight: 300;
+    }
+
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .pill {
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(61,127,255,0.25);
+      background: rgba(61,127,255,0.07);
+      color: #7eaaff;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .terminal {
+      background: #060911;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+      min-width: 280px;
+      flex-shrink: 0;
+    }
+
+    .terminal-bar {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .td-r { background: #ff5f57; }
+    .td-y { background: #febc2e; }
+    .td-g { background: #28c840; }
+
+    .t-line { display: flex; gap: 0.5rem; color: var(--muted-2); }
+    .t-prompt { color: rgba(61,127,255,0.6); user-select: none; }
+    .t-cmd { color: #a8c4ff; }
+    .t-out { color: var(--success); }
+    .t-dim { color: var(--muted-2); opacity: 0.6; }
+
+    /* ── Ownership strip ─────────────────────────────────── */
+    .ownership-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .ownership-item {
+      background: var(--bg-soft);
+      padding: 1.5rem 1.4rem;
+      transition: background 0.18s;
+    }
+
+    .ownership-item:hover { background: var(--card-hover); }
+
+    .ownership-item .label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted-2);
+      margin-bottom: 0.35rem;
+    }
+
+    .ownership-item .value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* ── FAQ ─────────────────────────────────────────────── */
     .faq details {
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
       background: var(--bg-soft);
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.7rem;
+      transition: border-color 0.18s;
+    }
+
+    .faq details[open] {
+      border-color: rgba(61,127,255,0.25);
     }
 
     .faq summary {
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 500;
+      font-size: 0.97rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .faq summary::-webkit-details-marker { display: none; }
+
+    .faq summary::after {
+      content: '+';
+      font-size: 1.15rem;
+      color: var(--muted-2);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .faq details[open] summary::after {
+      transform: rotate(45deg);
     }
 
     .faq p {
-      margin: 0.65rem 0 0;
+      margin: 0.7rem 0 0;
       color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.65;
     }
 
+    /* ── Support ─────────────────────────────────────────── */
     .support-wrap {
       display: grid;
       grid-template-columns: 1.1fr 1fr;
-      gap: 1.1rem;
+      gap: 1.25rem;
       align-items: start;
     }
 
     .form-card label {
       display: block;
       margin-bottom: 0.35rem;
-      font-weight: 600;
-      font-size: 0.92rem;
+      font-weight: 500;
+      font-size: 0.88rem;
+      color: var(--muted);
     }
 
     .form-card input,
     .form-card textarea,
     .form-card select {
       width: 100%;
-      margin-bottom: 0.9rem;
+      margin-bottom: 0.85rem;
       border: 1px solid var(--line);
-      background: #0f0f18;
+      background: rgba(0,0,0,0.25);
       color: var(--text);
-      border-radius: 10px;
-      padding: 0.7rem 0.8rem;
+      border-radius: 8px;
+      padding: 0.65rem 0.8rem;
       font: inherit;
+      font-size: 0.93rem;
+      transition: border-color 0.18s;
+      outline: none;
     }
+
+    .form-card input:focus,
+    .form-card textarea:focus,
+    .form-card select:focus {
+      border-color: rgba(61,127,255,0.5);
+    }
+
+    .form-card select option { background: #0e1219; }
 
     .success-message {
-      border: 1px solid rgba(87, 217, 157, 0.45);
-      background: rgba(87, 217, 157, 0.08);
-      color: #dcffe9;
-      padding: 1rem;
-      border-radius: 12px;
+      border: 1px solid rgba(76,217,160,0.35);
+      background: rgba(76,217,160,0.07);
+      color: #a8f0d4;
+      padding: 1.1rem;
+      border-radius: 10px;
+      font-size: 0.94rem;
     }
 
-    .privacy p { color: var(--muted); margin-top: 0.4rem; }
-    .privacy strong { color: var(--text); }
+    /* ── Privacy ─────────────────────────────────────────── */
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
 
-    footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 1.25rem 0 2.2rem;
+    .privacy-item {
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.4rem;
+    }
+
+    .privacy-item h4 {
+      margin: 0 0 0.4rem;
+      font-size: 0.94rem;
+      font-weight: 600;
+    }
+
+    .privacy-item p {
+      margin: 0;
       color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--line-soft);
+      padding: 1.5rem 0 2.5rem;
+      color: var(--muted-2);
     }
 
     .footer-inner {
@@ -276,167 +669,526 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 0.8rem;
+      gap: 1rem;
     }
 
-    .footer-links { display: flex; gap: 1rem; }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
 
-    @media (max-width: 960px) {
+    .footer-links {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.88rem;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 0;
+    }
+
+    /* ── Scroll animations ───────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 900px) {
       .features-grid,
       .steps,
-      .support-wrap {
-        grid-template-columns: 1fr;
-      }
+      .ownership-strip,
+      .privacy-grid { grid-template-columns: 1fr; }
 
+      .feature-hero,
+      .selfhost-callout { grid-template-columns: 1fr; }
+      .feature-hero { grid-column: span 1; }
+      .steps::before { display: none; }
+      .support-wrap { grid-template-columns: 1fr; }
       section { padding: 4rem 0; }
-      .hero { padding-top: 4.75rem; }
+      .hero { padding: 5rem 0 4rem; }
     }
 
     @media (max-width: 560px) {
       .btn { width: 100%; }
       .cta-row { align-items: stretch; }
       .nav .btn { width: auto; }
+      .selfhost-callout { padding: 2rem 1.5rem; }
+      .terminal { min-width: 0; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ── Nav ─────────────────────────────────────────────── -->
   <nav class="nav">
     <div class="container nav-inner">
       <a href="#" class="wordmark" aria-label="Curatio home">Curatio</a>
-      <a class="btn btn-primary" href="#">Download on the App Store</a>
+      <div class="nav-links">
+        <a class="btn btn-ghost" href="#features">Features</a>
+        <a class="btn btn-ghost" href="#server">Server</a>
+        <a class="btn btn-ghost" href="#coming-soon">Coming Soon</a>
+      </div>
     </div>
   </nav>
 
   <main>
+
+    <!-- ── Hero ──────────────────────────────────────────── -->
     <section class="hero">
       <div class="container">
-        <h1>Stream anything. Beautifully.</h1>
-        <p>Curatio brings your private media library to Apple TV and iPhone — with a native interface built for the big screen.</p>
+        <div class="hero-eyebrow">Coming soon to Apple TV &amp; iOS</div>
+        <h1>Your library.<br><em>Your server.</em> Your screen.</h1>
+        <p class="hero-sub">Curatio is a native Apple TV and iPhone app for your own private media collection — paired with Curatio Server, your files at home become a cinema-quality streaming experience everywhere.</p>
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">Download for Apple TV</a>
-          <a href="#" class="btn btn-secondary">Download for iPhone</a>
+          <a href="#coming-soon" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Coming Soon — Apple TV
+          </a>
+          <a href="#coming-soon" class="btn btn-ghost">Coming Soon — iPhone</a>
         </div>
-        <div class="badges" aria-label="Supported devices and quality badges">
-          <span class="badge">Apple TV</span>
+        <div class="badges" aria-label="Platform and quality badges">
+          <span class="badge">Apple TV 4K</span>
           <span class="badge">iPhone</span>
+          <span class="badge">iPad</span>
           <span class="badge">HDR</span>
           <span class="badge">4K</span>
+          <span class="badge">MKV · MP4 · H.265</span>
         </div>
       </div>
     </section>
 
-    <section>
+    <!-- ── Ownership strip ────────────────────────────────── -->
+    <div class="container reveal">
+      <div class="ownership-strip">
+        <div class="ownership-item">
+          <div class="label">Your files</div>
+          <div class="value">Stay on your hardware, always</div>
+        </div>
+        <div class="ownership-item">
+          <div class="label">No subscription</div>
+          <div class="value">One app, no recurring fees</div>
+        </div>
+        <div class="ownership-item">
+          <div class="label">No limits</div>
+          <div class="value">Unlimited library, unlimited users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Features ──────────────────────────────────────── -->
+    <section id="features">
       <div class="container">
-        <h2 class="section-title">Features</h2>
-        <p class="section-subtitle">Everything in Curatio is designed to keep your private library fast, elegant, and effortless to enjoy on every screen.</p>
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Built for people who own their media</h2>
+        <p class="section-sub">Everything about Curatio is designed for the experience of watching your own collection — not someone else's catalogue.</p>
+
         <div class="features-grid">
-          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></div><h3>Private media, your way</h3><p>Connect to your own media server or use compatible add-ons. Your library, your rules.</p></article>
-          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M15 12h5"/></svg></div><h3>Built for Apple TV</h3><p>Every interaction designed for the Siri Remote. Fast shelf browsing, focus-aware cards, and instant search.</p></article>
-          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M12 3l2.6 5.7L21 9.6l-4.5 4.4 1 6.3L12 17.4 6.5 20.3l1-6.3L3 9.6l6.4-.9z"/></svg></div><h3>HDR playback</h3><p>Hardware-accelerated video with automatic HDR mode switching. Watch your content the way it was mastered.</p></article>
-          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/><path d="M12 8v4l3 2"/></svg></div><h3>Smart intro skip</h3><p>Audio fingerprinting detects intros and credits across episodes automatically, without any manual setup.</p></article>
-          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M4 9h16"/><path d="M4 15h10"/><circle cx="18" cy="15" r="2"/></svg></div><h3>Seamless audio &amp; subtitles</h3><p>Switch audio tracks and subtitles mid-playback without interruption. Multiple language support built in.</p></article>
-          <article class="card"><div class="icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8f89ff" stroke-width="1.8"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Continue watching</h3><p>Resume exactly where you left off, across Apple TV and iPhone, synced automatically.</p></article>
+
+          <!-- Wide hero card -->
+          <article class="card feature-hero reveal">
+            <div class="feature-hero-text">
+              <h3>Runs on your own server. Streams to every screen.</h3>
+              <p>Curatio pairs with <strong style="color:var(--text)">Curatio Server</strong> — free, open-source software you run at home or on a VPS. Your files never leave your control, and every device you authorise gets the full experience: rich metadata, artwork, episode guides, and perfect playback quality.</p>
+            </div>
+            <div class="feature-hero-visual">
+              <div class="server-line">
+                <span class="dot"></span>
+                <span>Curatio Server</span>
+                <code>online</code>
+              </div>
+              <div class="server-line" style="opacity:0.75">
+                <span class="dot" style="background:#7eaaff;box-shadow:0 0 6px #7eaaff"></span>
+                <span>Apple TV paired</span>
+                <code>streaming</code>
+              </div>
+              <div class="server-line" style="opacity:0.55">
+                <span class="dot" style="background:#7eaaff;box-shadow:0 0 6px #7eaaff"></span>
+                <span>iPhone paired</span>
+                <code>ready</code>
+              </div>
+              <div class="server-line" style="opacity:0.35">
+                <span class="dot" style="background:var(--muted-2);box-shadow:none"></span>
+                <span>Add another device</span>
+                <code>/pair</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <rect x="2" y="5" width="20" height="14" rx="3"/>
+                <path d="M15 12h5"/>
+              </svg>
+            </div>
+            <h3>Built for the big screen</h3>
+            <p>Every interaction is designed for the Apple TV Siri Remote. Focus-aware cards, fast shelf navigation, and instant search that feels native.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <path d="M12 3l2.6 5.7L21 9.6l-4.5 4.4 1 6.3L12 17.4 6.5 20.3l1-6.3L3 9.6l6.4-.9z"/>
+              </svg>
+            </div>
+            <h3>HDR playback</h3>
+            <p>Hardware-accelerated decoding with automatic HDR mode switching. Your files play exactly as they were mastered.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/><path d="M12 8v4l3 2"/>
+              </svg>
+            </div>
+            <h3>Smart intro skip</h3>
+            <p>Audio fingerprinting detects intros and credits automatically across every episode — no manual setup, no third-party service.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/>
+              </svg>
+            </div>
+            <h3>Continue Watching</h3>
+            <p>The server tracks your exact position in every file. Pause on Apple TV, resume on iPhone — in the right place every time.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <path d="M4 9h16"/><path d="M4 15h10"/><circle cx="18" cy="15" r="2"/>
+              </svg>
+            </div>
+            <h3>Audio &amp; subtitle control</h3>
+            <p>Switch tracks mid-playback without restarting. MKV audio streams, subtitle files, and multiple language tracks all handled natively.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <h3>Invite-gated accounts</h3>
+            <p>Create one-time invite codes for the people you want in your library. Everyone gets independent watch history and their own profile.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h3>Two-factor authentication</h3>
+            <p>Optional TOTP 2FA on every account. Server credentials stay in your device's secure Keychain and never leave your device.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+            </div>
+            <h3>Rich metadata &amp; artwork</h3>
+            <p>Curatio Server automatically fetches posters, backdrops, cast, episode guides, and ratings from TMDB — no manual tagging needed.</p>
+          </article>
+
         </div>
       </div>
     </section>
 
+    <!-- ── Self-host callout ──────────────────────────────── -->
+    <section id="server" style="padding-top:0">
+      <div class="container">
+        <div class="selfhost-callout reveal">
+          <div>
+            <div class="section-label" style="margin-bottom:0.5rem">Curatio Server</div>
+            <h3>Free and open source.<br>Available now on GitHub.</h3>
+            <p>Curatio Server is the self-hosted backend for the Curatio app. The Docker image is available on GitHub — set it up on a home server, NAS, Mac mini, or any VPS in minutes. Point it at your media folders and it handles the rest: scanning, metadata, user accounts, and streaming.</p>
+            <div class="feature-pills">
+              <span class="pill">Docker Compose</span>
+              <span class="pill">PostgreSQL</span>
+              <span class="pill">Automatic TMDB metadata</span>
+              <span class="pill">Admin dashboard</span>
+              <span class="pill">HTTP range streaming</span>
+              <span class="pill">MIT licensed</span>
+            </div>
+            <div style="margin-top:1.25rem">
+              <a href="https://github.com/your-org/curatio-server" target="_blank" rel="noopener" class="btn btn-ghost" style="gap:0.5rem;font-size:0.88rem">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                View on GitHub
+              </a>
+            </div>
+          </div>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot td-r"></div>
+              <div class="terminal-dot td-y"></div>
+              <div class="terminal-dot td-g"></div>
+            </div>
+            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">git clone curatio-server</span></div>
+            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cp .env.example .env</span></div>
+            <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">docker-compose up -d</span></div>
+            <div class="t-line" style="margin-top:0.4rem"><span class="t-out">✓</span> <span class="t-dim">Scanning library…</span></div>
+            <div class="t-line"><span class="t-out">✓</span> <span class="t-dim">142 movies, 873 episodes</span></div>
+            <div class="t-line"><span class="t-out">✓</span> <span class="t-dim">Server ready at :8000</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── How it works ───────────────────────────────────── -->
     <section>
       <div class="container">
-        <h2 class="section-title">How it works</h2>
+        <div class="section-label">Setup</div>
+        <h2 class="section-title">Ready in minutes</h2>
+        <p class="section-sub">Four steps from a folder of video files to a fully featured streaming experience on your Apple TV.</p>
         <div class="steps">
-          <article class="card"><div class="step-num">1</div><h3>Add your server</h3><p>Enter your media server URL or scan a QR code to pair instantly.</p></article>
-          <article class="card"><div class="step-num">2</div><h3>Browse your library</h3><p>Your content appears in a beautiful shelf layout, ready to explore.</p></article>
-          <article class="card"><div class="step-num">3</div><h3>Press play</h3><p>Sit back. Curatio handles the rest.</p></article>
+          <article class="card reveal">
+            <div class="step-num active">1</div>
+            <h3>Run Curatio Server</h3>
+            <p>Clone the repo, add your TMDB key and media path to <code style="font-size:0.82rem;color:#7eaaff">.env</code>, and start with Docker Compose. The server scans your files automatically.</p>
+          </article>
+          <article class="card reveal" style="transition-delay:0.08s">
+            <div class="step-num active">2</div>
+            <h3>Create your account</h3>
+            <p>Log in to the admin panel, generate an invite code, and register your user account at your server's address.</p>
+          </article>
+          <article class="card reveal" style="transition-delay:0.16s">
+            <div class="step-num active">3</div>
+            <h3>Pair the app</h3>
+            <p>Open Curatio on Apple TV or iPhone. A 6-character code appears on screen — enter it at your server's pairing page and you're connected.</p>
+          </article>
+          <article class="card reveal" style="transition-delay:0.24s">
+            <div class="step-num active">4</div>
+            <h3>Press play</h3>
+            <p>Your entire library appears with artwork, cast, episode guides, and Continue Watching. Sit back.</p>
+          </article>
         </div>
       </div>
     </section>
 
+    <!-- ── Coming Soon ──────────────────────────────────── -->
+    <section id="coming-soon">
+      <div class="container">
+        <div class="section-label">Coming Soon</div>
+        <h2 class="section-title">The app is on its way</h2>
+        <p class="section-sub">Curatio for Apple TV and iPhone is currently in development. Curatio Server is available on GitHub right now — get your library set up ahead of launch.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;max-width:640px" class="reveal">
+          <div class="card" style="display:flex;align-items:center;gap:1rem;padding:1.25rem 1.4rem">
+            <div class="icon" style="flex-shrink:0;margin:0">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="color:#7eaaff"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:0.95rem">Apple TV</div>
+              <div style="color:var(--muted);font-size:0.83rem;margin-top:2px">Coming soon to the App Store</div>
+            </div>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:1rem;padding:1.25rem 1.4rem">
+            <div class="icon" style="flex-shrink:0;margin:0">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#7eaaff" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:0.95rem">iPhone &amp; iPad</div>
+              <div style="color:var(--muted);font-size:0.83rem;margin-top:2px">Coming soon to the App Store</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem" class="reveal">
+          <a href="https://github.com/your-org/curatio-server" target="_blank" rel="noopener" class="btn btn-ghost" style="gap:0.5rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            Curatio Server is available on GitHub now
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Support + FAQ ──────────────────────────────────── -->
     <section id="support">
       <div class="container">
+        <div class="section-label">Help</div>
         <h2 class="section-title">Need help?</h2>
         <div class="support-wrap">
-          <div class="faq">
-            <details><summary>What media servers does Curatio support?</summary><p>Curatio works with any server that supports the Stremio Add-on protocol, including popular self-hosted options.</p></details>
-            <details><summary>Is Curatio free?</summary><p>Curatio is free to download. Some features may require a compatible media server.</p></details>
-            <details><summary>Does Curatio access my files directly?</summary><p>No. Curatio connects to your media server over your local network or the internet. Your files stay on your server.</p></details>
-            <details><summary>Which Apple devices are supported?</summary><p>Curatio runs on Apple TV (4th generation and later) and iPhone (iOS 17 and later).</p></details>
-            <details><summary>How does intro skip work?</summary><p>Curatio analyses the audio of episodes in the background to detect repeated segments like intros and credits. No microphone is used — only the stream audio is processed.</p></details>
+
+          <div class="faq reveal">
+            <details>
+              <summary>What do I need to run Curatio?</summary>
+              <p>The Curatio app is coming soon to the App Store for Apple TV and iPhone. Curatio Server — the self-hosted backend — is free and open source, available on GitHub now. You'll need Docker to run it and a free TMDB API key for metadata and artwork.</p>
+            </details>
+            <details>
+              <summary>Where are my files stored?</summary>
+              <p>On your hardware — always. Curatio Server reads from the media directories you specify and streams directly to the app. No files are uploaded anywhere.</p>
+            </details>
+            <details>
+              <summary>Can I access my library away from home?</summary>
+              <p>Yes. If you expose Curatio Server to the internet (via a domain, reverse proxy, or VPN like Tailscale), the Curatio app works identically over any network.</p>
+            </details>
+            <details>
+              <summary>Which file formats are supported?</summary>
+              <p>Curatio uses AVKit on Apple platforms, which natively supports MP4, MKV, H.264, H.265/HEVC, and HLS. Most modern video files play without any conversion.</p>
+            </details>
+            <details>
+              <summary>Can I share my library with family?</summary>
+              <p>Yes. Curatio Server supports multiple user accounts, each with independent watch progress and history. You control access through one-time invite codes — no open sign-ups.</p>
+            </details>
+            <details>
+              <summary>How does intro skip work?</summary>
+              <p>Curatio Server analyses episode audio to detect repeated segments like title sequences and credit rolls. Detection runs in the background — no microphone is used and no audio data leaves your server.</p>
+            </details>
+            <details>
+              <summary>Which Apple devices are supported?</summary>
+              <p>Curatio runs on Apple TV (4th generation and later) and iPhone (iOS 17 and later). iPad support is included with the iPhone app.</p>
+            </details>
           </div>
 
-          <div class="card form-card" id="contact-card">
-            <!-- Replace REPLACE_WITH_YOUR_ID with your real Formspree form ID before publishing. -->
+          <div class="card form-card reveal" id="contact-card" style="transition-delay:0.1s">
+            <h3 style="margin:0 0 1rem;font-size:1.05rem">Send a message</h3>
             <form id="contact-form" action="https://formspree.io/f/REPLACE_WITH_YOUR_ID" method="POST">
               <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
               <label for="name">Name</label>
-              <input id="name" name="name" type="text" required />
+              <input id="name" name="name" type="text" required placeholder="Your name" />
               <label for="email">Email</label>
-              <input id="email" name="email" type="email" required />
+              <input id="email" name="email" type="email" required placeholder="you@example.com" />
               <label for="subject">Subject</label>
               <select id="subject" name="subject" required>
                 <option value="General Question">General Question</option>
                 <option value="Bug Report">Bug Report</option>
                 <option value="Feature Request">Feature Request</option>
+                <option value="Server Setup Help">Server Setup Help</option>
                 <option value="Other">Other</option>
               </select>
               <label for="message">Message</label>
-              <textarea id="message" name="message" rows="4" required></textarea>
-              <button type="submit" class="btn btn-primary">Send Message</button>
+              <textarea id="message" name="message" rows="4" required placeholder="What can we help with?"></textarea>
+              <button type="submit" class="btn btn-primary" style="width:100%;font-size:0.95rem">Send Message</button>
             </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Privacy ────────────────────────────────────────── -->
+    <section id="privacy">
+      <div class="container">
+        <div class="section-label">Privacy Policy</div>
+        <h2 class="section-title">Your data stays yours</h2>
+        <p class="section-sub" style="margin-bottom:1.75rem">Last updated: 2025</p>
+        <div class="privacy-grid reveal">
+          <div class="privacy-item">
+            <h4>What we collect</h4>
+            <p>Curatio collects no personal data, usage analytics, or telemetry. The app operates entirely between your device and your chosen Curatio Server.</p>
+          </div>
+          <div class="privacy-item">
+            <h4>iCloud sync</h4>
+            <p>If you enable iCloud sync in Settings, your app preferences are synced via your personal iCloud account. This data is not accessible to Curatio.</p>
+          </div>
+          <div class="privacy-item">
+            <h4>Local network access</h4>
+            <p>Curatio requests local network permission to discover and connect to servers on your home network. No data from your local network is transmitted to any Curatio service.</p>
+          </div>
+          <div class="privacy-item">
+            <h4>Credentials</h4>
+            <p>Your server credentials are stored exclusively in your device's secure Keychain and are never transmitted to or stored by Curatio.</p>
+          </div>
+          <div class="privacy-item">
+            <h4>Third-party servers</h4>
+            <p>When you connect to a media server, you are subject to that server operator's privacy policy. Curatio is not responsible for third-party data practices.</p>
+          </div>
+          <div class="privacy-item">
+            <h4>Contact</h4>
+            <p>Privacy questions can be submitted using the support form above, or by emailing us directly.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="privacy" class="privacy">
-      <div class="container">
-        <h2 class="section-title">Privacy Policy</h2>
-        <p class="section-subtitle">Last updated: 2025</p>
-        <p><strong>What we collect.</strong> Curatio does not collect personal data, usage analytics, or telemetry by default. The app operates entirely between your device and your chosen media server.</p>
-        <p><strong>iCloud sync.</strong> If you enable iCloud sync in Settings, your app preferences (server configuration, language preferences, display settings) are synced via your personal iCloud account. This data is not accessible to Curatio.</p>
-        <p><strong>Local network.</strong> Curatio requests local network access to discover and connect to media servers on your home network. No data from your local network is transmitted to any Curatio server.</p>
-        <p><strong>Credentials.</strong> Your server credentials are stored exclusively in your device's secure Keychain and are never transmitted to or stored by Curatio.</p>
-        <p><strong>Third-party servers.</strong> When you connect to a media server or add-on, you are subject to that service's own privacy policy. Curatio is not responsible for third-party data practices.</p>
-        <p><strong>Children.</strong> Curatio is not directed at children under 13 and does not knowingly collect information from children.</p>
-        <p><strong>Contact.</strong> Privacy questions can be submitted via the support form above.</p>
-      </div>
-    </section>
   </main>
 
+  <!-- ── Footer ────────────────────────────────────────────── -->
   <footer>
     <div class="container footer-inner">
-      <div><span class="wordmark">Curatio</span> &nbsp; © 2025 Curatio</div>
+      <div class="footer-left">
+        <span class="wordmark">Curatio</span>
+        <span style="font-size:0.85rem">© 2025 Curatio</span>
+      </div>
       <div class="footer-links">
-        <a href="#privacy">Privacy Policy</a>
+        <a href="#privacy">Privacy</a>
         <a href="#support">Support</a>
-        <a href="#">App Store</a>
+        <a href="#server">Server</a>
+        <a href="https://github.com/your-org/curatio-server" target="_blank" rel="noopener">GitHub</a>
+        <a href="#coming-soon">Coming Soon</a>
       </div>
     </div>
   </footer>
 
   <script>
+    // Form submission
     (function () {
       var form = document.getElementById('contact-form');
       if (!form) return;
-
-      form.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        var data = new FormData(form);
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
         fetch(form.action, {
-          method: form.method,
-          body: data,
+          method: 'POST',
+          body: new FormData(form),
           headers: { 'Accept': 'application/json' }
         })
-        .then(function (response) {
-          if (!response.ok) throw new Error('Request failed');
-          var wrapper = document.getElementById('contact-card');
-          wrapper.innerHTML = '<div class="success-message"><strong>Thanks — your message was sent.</strong><br/>We\'ll get back to you as soon as possible.</div>';
+        .then(function (r) {
+          if (!r.ok) throw new Error();
+          document.getElementById('contact-card').innerHTML =
+            '<div class="success-message"><strong>Message sent.</strong><br>We\'ll get back to you as soon as possible.</div>';
         })
-        .catch(function () {
-          form.submit();
+        .catch(function () { form.submit(); });
+      });
+    })();
+
+    // Scroll reveal
+    (function () {
+      var els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+
+    // FAQ: close others when one opens
+    (function () {
+      document.querySelectorAll('.faq details').forEach(function (detail) {
+        detail.addEventListener('toggle', function () {
+          if (detail.open) {
+            document.querySelectorAll('.faq details').forEach(function (other) {
+              if (other !== detail) other.open = false;
+            });
+          }
         });
       });
     })();
   </script>
+
 </body>
 </html>
